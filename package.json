@@ -1,0 +1,17 @@
+{
+  "name": "connect4-digital-tech",
+  "version": "1.0.0",
+  "private": true,
+  "scripts": {
+    "dev": "next dev",
+    "build": "next build",
+    "start": "next start"
+  },
+  "dependencies": {
+    "@upstash/redis": "1.35.6",
+    "next": "15.5.26",
+    "react": "19.2.3",
+    "react-dom": "19.2.3"
+  },
+  "engines": { "node": ">=18.18" }
+}

@@ -1,0 +1,109 @@
+'use client';
+import { useCallback, useEffect, useRef, useState } from 'react';
+import { TABS } from './tabs';
+import Header from './Header';
+import CoinNav from './CoinNav';
+import DropBar from './DropBar';
+import Hero from './Hero';
+import About from './About';
+import Problem from './Problem';
+import Pillars from './Pillars';
+import BoardStrip from './BoardStrip';
+import WhiteLabel from './WhiteLabel';
+import Demos from './Demos';
+import Work from './Work';
+import Ai from './Ai';
+import Audit from './Audit';
+import How from './How';
+import Pricing from './Pricing';
+import Cta from './Cta';
+import Contact from './Contact';
+import Footer from './Footer';
+
+const PANELS = [
+  <><Hero /><About /><Problem /><Pillars /></>,
+  <><BoardStrip move={2} title="the proof" /><WhiteLabel /><Demos /><Work /></>,
+  <><BoardStrip move={3} title="the edge" /><Ai /><Audit /></>,
+  <><BoardStrip move={4} title="the win" win /><How /><Pricing /><Cta /><Contact /></>
+];
+
+function NextMove({ i }) {
+  const next = TABS[i + 1], prev = TABS[i - 1];
+  return (
+    <div className="next-move wrap">
+      <div className="nm-board" aria-hidden="true">
+        {TABS.map((t, k) => <i key={k} style={k <= i ? { background: t.c } : undefined} />)}
+      </div>
+      {next ? (
+        <>
+          <p className="nm-text">move {i + 1} of 4 done. next up: <b style={{ color: next.c }}>{next.label}</b></p>
+          <a href={`#tab-${next.id}`} className={`btn ${next.btn} btn-lg`}>{next.label} →</a>
+        </>
+      ) : (
+        <>
+          <p className="nm-text"><b>four in a row.</b> that's the whole board.</p>
+          <a href="#tab-problem" className="btn btn-ghost btn-lg">back to the start</a>
+        </>
+      )}
+      {prev && <a href={`#tab-${prev.id}`} className="nm-back">← back to {prev.label}</a>}
+    </div>
+  );
+}
+
+export default function TabShell() {
+  const [active, setActive] = useState(0);
+  const pending = useRef(null);
+
+  /* any #hash can open a tab: #tab-proof opens that tab, #pricing opens the tab that holds #pricing */
+  const resolve = useCallback((hash) => {
+    const id = (hash || '').slice(1);
+    if (id.startsWith('/')) return; // preview-only admin route
+    if (!id) { setActive(0); return; }
+    const t = TABS.findIndex((x) => `tab-${x.id}` === id);
+    if (t >= 0) { setActive(t); pending.current = 'top'; return; }
+    const panel = document.getElementById(id)?.closest('.tab-panel');
+    if (panel) { setActive(Number(panel.dataset.index)); pending.current = id; }
+  }, []);
+
+  useEffect(() => {
+    resolve(location.hash);
+    const onHash = () => resolve(location.hash);
+    // clicking a link whose hash is already in the address bar fires no hashchange — handle it directly
+    const onClick = (e) => {
+      const a = e.target.closest('a[href^="#"]');
+      if (a && a.getAttribute('href') === location.hash) { e.preventDefault(); resolve(location.hash); }
+    };
+    window.addEventListener('hashchange', onHash);
+    document.addEventListener('click', onClick);
+    return () => { window.removeEventListener('hashchange', onHash); document.removeEventListener('click', onClick); };
+  }, [resolve]);
+
+  /* after a tab opens, scroll to the top or to the requested section */
+  useEffect(() => {
+    const target = pending.current;
+    if (!target) return;
+    pending.current = null;
+    requestAnimationFrame(() => {
+      if (target === 'top') window.scrollTo({ top: 0, behavior: 'instant' });
+      else document.getElementById(target)?.scrollIntoView({ behavior: 'smooth', block: 'start' });
+    });
+  });
+
+  return (
+    <>
+      <Header active={active} />
+      <CoinNav active={active} />
+      <DropBar />
+      <main>
+        {PANELS.map((content, i) => (
+          <div key={TABS[i].id} id={`tab-${TABS[i].id}`} className="tab-panel" data-index={i}
+               role="tabpanel" aria-label={TABS[i].label} hidden={active !== i}>
+            {content}
+            <NextMove i={i} />
+          </div>
+        ))}
+      </main>
+      <Footer />
+    </>
+  );
+}
