@@ -3,7 +3,7 @@ import { useEffect, useRef, useState } from 'react';
 
 const PICKS = [['tracking', 'var(--cy)'], ['data', 'var(--lm)'], ['reporting', 'var(--am)'], ['automation', 'var(--mg)']];
 
-export default function ContactForm() {
+export default function ContactForm({ c }) {
   const [state, setState] = useState('idle'); // idle · sending · sent
   const [error, setError] = useState('');
   const formRef = useRef(null);
@@ -45,8 +45,8 @@ export default function ContactForm() {
   return (
     <div className={`c-form reveal${state === 'sent' ? ' sent' : ''}`} id="contactBox">
       <form ref={formRef} noValidate onSubmit={submit}>
-        <h3>drop us a message</h3>
-        <p className="sub">takes a minute. no deck, no sales script.</p>
+        <h3>{c.formTitle}</h3>
+        <p className="sub">{c.formSub}</p>
         <div className="f-row">
           <div className="f-field"><label htmlFor="fName">your name</label><input id="fName" name="name" autoComplete="name" required /></div>
           <div className="f-field"><label htmlFor="fAgency">agency</label><input id="fAgency" name="agency" autoComplete="organization" /></div>
@@ -62,14 +62,14 @@ export default function ContactForm() {
         <div className="f-field"><label htmlFor="fMsg">what's going on?</label><textarea id="fMsg" name="message" ref={msgRef} placeholder="e.g. our conversions stopped matching meta three weeks ago…" /></div>
         <div className="f-err" role="alert">{error}</div>
         <div className="f-submit">
-          <button type="submit" className="btn btn-light btn-md" disabled={state === 'sending'}>{state === 'sending' ? 'dropping…' : 'drop it in'}</button>
-          <small>or email hello@connect4.tech directly.</small>
+          <button type="submit" className="btn btn-light btn-md" disabled={state === 'sending'}>{state === 'sending' ? 'dropping…' : c.formButton}</button>
+          {c.email && <small>or email {c.email} directly.</small>}
         </div>
       </form>
       <div className="c-done" role="status">
         <div className="row"><i style={{ background: 'var(--cy)' }} /><i style={{ background: 'var(--lm)' }} /><i style={{ background: 'var(--am)' }} /><i style={{ background: 'var(--mg)' }} /></div>
-        <h3>message dropped in.</h3>
-        <p>four in a row — we'll be in touch within a working day.</p>
+        <h3>{c.sentTitle}</h3>
+        <p>{c.sentText}</p>
         <button type="button" className="btn btn-ghost btn-md" style={{ marginTop: 20 }} onClick={() => { formRef.current.reset(); setState('idle'); }}>send another</button>
       </div>
     </div>

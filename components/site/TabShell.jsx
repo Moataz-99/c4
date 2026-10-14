@@ -20,29 +20,24 @@ import Cta from './Cta';
 import Contact from './Contact';
 import Footer from './Footer';
 
-const PANELS = [
-  <><Hero /><About /><Problem /><Pillars /></>,
-  <><BoardStrip move={2} title="the proof" /><WhiteLabel /><Demos /><Work /></>,
-  <><BoardStrip move={3} title="the edge" /><Ai /><Audit /></>,
-  <><BoardStrip move={4} title="the win" win /><How /><Pricing /><Cta /><Contact /></>
-];
 
-function NextMove({ i }) {
-  const next = TABS[i + 1], prev = TABS[i - 1];
+
+function NextMove({ i, tabs, t }) {
+  const next = tabs[i + 1], prev = tabs[i - 1];
   return (
     <div className="next-move wrap">
       <div className="nm-board" aria-hidden="true">
-        {TABS.map((t, k) => <i key={k} style={k <= i ? { background: t.c } : undefined} />)}
+        {tabs.map((x, k) => <i key={k} style={k <= i ? { background: x.c } : undefined} />)}
       </div>
       {next ? (
         <>
-          <p className="nm-text">move {i + 1} of 4 done. next up: <b style={{ color: next.c }}>{next.label}</b></p>
+          <p className="nm-text">move {i + 1} of 4 done. {t.nextLead} <b style={{ color: next.c }}>{next.label}</b></p>
           <a href={`#tab-${next.id}`} className={`btn ${next.btn} btn-lg`}>{next.label} →</a>
         </>
       ) : (
         <>
-          <p className="nm-text"><b>four in a row.</b> that's the whole board.</p>
-          <a href="#tab-problem" className="btn btn-ghost btn-lg">back to the start</a>
+          <p className="nm-text"><b>{t.finalLine}</b></p>
+          <a href="#tab-problem" className="btn btn-ghost btn-lg">{t.restart}</a>
         </>
       )}
       {prev && <a href={`#tab-${prev.id}`} className="nm-back">← back to {prev.label}</a>}
@@ -50,7 +45,15 @@ function NextMove({ i }) {
   );
 }
 
-export default function TabShell() {
+export default function TabShell({ content: c }) {
+  /* tab colours and ids are fixed; their names come from the editable content */
+  const tabs = TABS.map((x, i) => ({ ...x, ...(c.tabs.items[i] || {}) }));
+  const PANELS = [
+    <><Hero c={c.hero} game={c.game} /><About c={c.about} /><Problem c={c.problem} /><Pillars c={c.pillars} /></>,
+    <><BoardStrip move={2} title={tabs[1].label} /><WhiteLabel c={c.whiteLabel} /><Demos c={c.demos} /><Work c={c.work} /></>,
+    <><BoardStrip move={3} title={tabs[2].label} /><Ai c={c.ai} /><Audit c={c.audit} /></>,
+    <><BoardStrip move={4} title={tabs[3].label} win /><How c={c.how} /><Pricing c={c.pricing} /><Cta c={c.cta} /><Contact c={c.contact} /></>
+  ];
   const [active, setActive] = useState(0);
   const pending = useRef(null);
 
@@ -78,6 +81,13 @@ export default function TabShell() {
     return () => { window.removeEventListener('hashchange', onHash); document.removeEventListener('click', onClick); };
   }, [resolve]);
 
+  /* every real tab switch pulls the release lever */
+  const first = useRef(true);
+  useEffect(() => {
+    if (first.current) { first.current = false; return; }
+    window.dispatchEvent(new Event('c4:release'));
+  }, [active]);
+
   /* after a tab opens, scroll to the top or to the requested section */
   useEffect(() => {
     const target = pending.current;
@@ -91,19 +101,20 @@ export default function TabShell() {
 
   return (
     <>
-      <Header active={active} />
-      <CoinNav active={active} />
-      <DropBar />
+      <span className="board-rail l" aria-hidden="true" /><span className="board-rail r" aria-hidden="true" />
+      <Header active={active} tabs={tabs} brand={c.brand} />
+      <CoinNav active={active} tabs={tabs} />
+      <DropBar c={c.dropbar} />
       <main>
         {PANELS.map((content, i) => (
           <div key={TABS[i].id} id={`tab-${TABS[i].id}`} className="tab-panel" data-index={i}
-               role="tabpanel" aria-label={TABS[i].label} hidden={active !== i}>
+               role="tabpanel" aria-label={tabs[i].label} hidden={active !== i}>
             {content}
-            <NextMove i={i} />
+            <NextMove i={i} tabs={tabs} t={c.tabs} />
           </div>
         ))}
       </main>
-      <Footer />
+      <Footer c={c.brand} />
     </>
   );
 }

@@ -4,7 +4,7 @@ import LogoMark from './LogoMark';
 
 const CONFETTI = ['#22D3EE', '#A3E635', '#FFD23F', '#FF3D8B', '#FFFFFF'];
 
-export default function DropToWin() {
+export default function DropToWin({ c }) {
   const [phase, setPhase] = useState('ready'); // ready → dropping → glowing → won
   const [confetti, setConfetti] = useState([]);
   const timers = useRef([]);
@@ -38,7 +38,7 @@ export default function DropToWin() {
 
   return (
     <div className="c4-game">
-      <p className="c4-hint">three are already in. drop the fourth — it's the actual game we're named after.</p>
+      <p className="c4-hint">{c.hint}</p>
       <svg className={`c4-demo${dropped ? ' dropped' : ''}${glow ? ' glow' : ''}`} width="100%" viewBox="52 36 226 242" role="img" aria-label="Connect 4 board with three discs already placed diagonally and one winning slot open at the top">
         <circle cx="94" cy="74" r="16" fill="#241A5C" /><circle cx="138" cy="74" r="16" fill="#241A5C" /><circle cx="182" cy="74" r="16" fill="#241A5C" />
         <circle cx="94" cy="118" r="16" fill="#241A5C" /><circle cx="138" cy="118" r="16" fill="#241A5C" /><circle cx="226" cy="118" r="16" fill="#241A5C" />
@@ -54,7 +54,7 @@ export default function DropToWin() {
         </g>
       </svg>
 
-      {!dropped && <button className="btn btn-primary btn-md" id="c4DropBtn" onClick={drop}>drop the winning piece</button>}
+      {!dropped && <button className="btn btn-primary btn-md" id="c4DropBtn" onClick={drop}>{c.button}</button>}
 
       {confetti.map((p) => (
         <span key={p.id} className="confetti-piece" style={{ left: p.left, background: p.bg, '--x': p.x, '--r': p.r, animationDelay: p.delay }} />
@@ -64,8 +64,8 @@ export default function DropToWin() {
         <div className="c4-msg">
           <div className="c4-msg-card">
             <div className="c4-logo-pop"><LogoMark size={52} /></div>
-            <strong>🏆 four in a row!</strong>
-            <p className="c4-story">as you dropped that fourth piece, we quietly connected four systems right behind it — tracking, data, reporting, automation. that's the whole pitch.</p>
+            <strong>{c.winTitle}</strong>
+            <p className="c4-story">{c.winStory}</p>
             <div className="c4-pillars-mini">
               <span><span className="dot" style={{ background: '#22D3EE' }} />tracking</span>
               <span><span className="dot" style={{ background: '#A3E635' }} />data</span>
@@ -73,8 +73,8 @@ export default function DropToWin() {
               <span><span className="dot" style={{ background: '#FF3D8B' }} />automation</span>
             </div>
             <div className="c4-msg-actions">
-              <button className="btn btn-ghost btn-md" onClick={reset}>drop again</button>
-              <a href="#contact" className="btn btn-primary btn-md">see it for real</a>
+              <button className="btn btn-ghost btn-md" onClick={reset}>{c.again}</button>
+              <a href="#contact" className="btn btn-primary btn-md">{c.real}</a>
             </div>
           </div>
         </div>

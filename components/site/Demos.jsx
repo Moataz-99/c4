@@ -1,18 +1,24 @@
+import { Label } from './bits';
 
-export default function Demos() {
+const VISUALS = [
+  <div className="pulse-row" key="p"><span className="pulse-dot" /><span className="pulse-dot" /><span className="pulse-dot live" /></div>,
+  <div className="bar-chart" key="b"><span style={{ height: '30%', background: 'var(--cy)' }} /><span style={{ height: '55%' }} /><span style={{ height: '40%', background: 'var(--lm)' }} /><span style={{ height: '70%' }} /><span style={{ height: '50%', background: 'var(--mg)' }} /></div>,
+  <div className="flow-row" key="f"><span className="flow-dot" style={{ background: 'var(--cy)' }} /><span className="flow-line" /><span className="flow-dot" style={{ background: 'var(--am)' }} /><span className="flow-line" /><span className="flow-dot" style={{ background: 'var(--mg)' }} /></div>
+];
+
+export default function Demos({ c }) {
   return (
-    <>
-<section className="demos-bg" id="demos" data-move="2">
-  <div className="wrap">
-    <div className="section-head left reveal">
-      <div className="section-label"><span className="move"><i style={{background:'var(--cy)'}}></i><i style={{background:'var(--lm)'}}></i><i></i><i></i></span>move 2 of 4 · see it in action</div>
-      <h2>what you'll actually be looking at</h2>
-      <p>a quick look at the screens behind the pitch — including the admin dashboard your team runs day to day.</p>
-    </div>
-    <div className="demo-grid reveal stagger">
-      <div className="demo-card">
-        <div className="demo-card-label">admin dashboard</div>
-        <div className="dash-mock">
+    <section className="demos-bg" id="demos" data-move="2">
+      <div className="wrap">
+        <div className="section-head left reveal">
+          <Label move={2} text={c.label} />
+          <h2>{c.title}</h2>
+          <p>{c.subtitle}</p>
+        </div>
+        <div className="demo-grid reveal stagger">
+          <div className="demo-card">
+            <div className="demo-card-label">{c.dashTitle}</div>
+            <div className="dash-mock">
           <div className="dash-top"><div className="dash-dots"><span></span><span></span><span></span></div><div className="dash-title">connect4 / admin</div></div>
           <div className="dash-body">
             <div className="dash-side">
@@ -37,35 +43,18 @@ export default function Demos() {
             </div>
           </div>
         </div>
-        <p className="demo-card-desc">one calm screen for every client — connections, activity, and status at a glance. the agency admin console — sign in to see the live board.</p>
-        <a href="/admin" style={{fontWeight:'600',color:'var(--mg-dark)',fontSize:'14px'}}>open the full dashboard →</a>
-      </div>
-      <div className="demo-card">
-        <div className="demo-card-label">tracking</div>
-        <div className="demo-mini-visual">
-          <div className="pulse-row">
-            <span className="pulse-dot"></span><span className="pulse-dot"></span><span className="pulse-dot live"></span>
+            <p className="demo-card-desc">{c.dashText}</p>
+            <a href="/admin" style={{ fontWeight: '600', color: 'var(--mg-dark)', fontSize: '14px' }}>{c.dashLink}</a>
           </div>
+          {c.cards.map((k, i) => (
+            <div key={i} className="demo-card">
+              <div className="demo-card-label">{k.title}</div>
+              <div className="demo-mini-visual">{VISUALS[i % 3]}</div>
+              <p className="demo-card-desc">{k.text}</p>
+            </div>
+          ))}
         </div>
-        <p className="demo-card-desc">server-side events landing in real time, even when the browser blocks the pixel.</p>
       </div>
-      <div className="demo-card">
-        <div className="demo-card-label">reporting</div>
-        <div className="demo-mini-visual">
-          <div className="bar-chart"><span style={{height:'30%',background:'var(--cy)'}}></span><span style={{height:'55%'}}></span><span style={{height:'40%',background:'var(--lm)'}}></span><span style={{height:'70%'}}></span><span style={{height:'50%',background:'var(--mg)'}}></span></div>
-        </div>
-        <p className="demo-card-desc">dashboards your client opens themselves — no monthly export.</p>
-      </div>
-      <div className="demo-card">
-        <div className="demo-card-label">automation</div>
-        <div className="demo-mini-visual">
-          <div className="flow-row"><span className="flow-dot" style={{background:'var(--cy)'}}></span><span className="flow-line"></span><span className="flow-dot" style={{background:'var(--am)'}}></span><span className="flow-line"></span><span className="flow-dot" style={{background:'var(--mg)'}}></span></div>
-        </div>
-        <p className="demo-card-desc">the handoffs and alerts, built once, running quietly since.</p>
-      </div>
-    </div>
-  </div>
-</section>
-    </>
+    </section>
   );
 }

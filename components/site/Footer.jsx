@@ -1,5 +1,5 @@
 
-export default function Footer() {
+export default function Footer({ c }) {
   return (
     <>
 <footer>
@@ -18,7 +18,7 @@ export default function Footer() {
       <a href="#pricing">pricing</a>
       <a href="#contact">contact</a>
     </div>
-    <span style={{fontSize:'12px',color:'var(--muted)'}}>© 2026 connect 4 digital tech · four in a row, every time</span>
+    <span style={{fontSize:'12px',color:'var(--muted)'}}>{c.footer}</span>
   </div>
 </footer>
     </>

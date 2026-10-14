@@ -1,4 +1,5 @@
 import './admin.css';
+import './admin-v2.css';
 
 export const metadata = {
   title: 'connect 4 — admin',

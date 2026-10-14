@@ -1,4 +1,5 @@
 import './site.css';
+import './site-v2.css';
 
 export const metadata = {
   title: 'Connect 4 Digital Tech — the backend team your agency never hired',

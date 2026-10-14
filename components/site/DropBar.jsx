@@ -7,15 +7,11 @@ const DISCS = [
   { word: 'reporting', c: 'var(--am)', ring: '#9A7405' },
   { word: 'automation', c: 'var(--mg)', ring: '#B31E5E' }
 ];
-const WINS = [
-  'your stack, connected.',
-  'your logo, our uptime.',
-  'no duct tape required.',
-  'the backend team you never hired.'
-];
+
 
 /* a tiny self-playing game: four discs drop, the row lights up, the lever releases them, repeat */
-export default function DropBar() {
+export default function DropBar({ c }) {
+  const WINS = c.wins.length ? c.wins : [''];
   const [filled, setFilled] = useState(0);        // discs in the row (0–4)
   const [phase, setPhase] = useState('filling');  // filling · win · release
   const [round, setRound] = useState(0);          // rows completed this visit
@@ -45,9 +41,9 @@ export default function DropBar() {
 
   const win = phase === 'win';
   let msg;
-  if (phase === 'release') msg = <>board cleared. <b style={{ color: '#fff' }}>next agency, please.</b></>;
-  else if (win) msg = <><b style={{ color: 'var(--am)' }}>four in a row</b><span className="db-tail"> — {WINS[(round - 1 + WINS.length) % WINS.length]}</span></>;
-  else if (filled === 0) msg = <>insert coin to connect<span className="db-cursor">_</span></>;
+  if (phase === 'release') msg = <>{c.cleared} <b style={{ color: '#fff' }}>{c.next}</b></>;
+  else if (win) msg = <><b style={{ color: 'var(--am)' }}>four in a row</b>{WINS[(round - 1 + WINS.length) % WINS.length] && <span className="db-tail"> — {WINS[(round - 1 + WINS.length) % WINS.length]}</span>}</>;
+  else if (filled === 0) msg = <>{c.idle}<span className="db-cursor">_</span></>;
   else msg = <><b style={{ color: DISCS[filled - 1].c }}>{DISCS[filled - 1].word}</b> dropped in{filled < 4 ? '…' : ''}</>;
 
   return (
@@ -65,8 +61,8 @@ export default function DropBar() {
 
         <p className="db-msg" key={`${phase}-${filled}`} aria-live="polite">{msg}</p>
 
-        <div className="db-score" aria-label={`rows connected this visit: ${round}`}>
-          <span>rows this visit</span><b>{String(round).padStart(2, '0')}</b>
+        <div className="db-score" aria-label={`${c.score}: ${round}`}>
+          <span>{c.score}</span><b>{String(round).padStart(2, '0')}</b>
         </div>
       </div>
     </div>

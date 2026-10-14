@@ -2,6 +2,7 @@
 import { useCallback, useRef, useState } from 'react';
 import LogoMark from '@/components/site/LogoMark';
 import { Overview, PillarView, Inbox, PrivateAI, Audits, Clients, Settings, NewClientModal } from './views';
+import SiteEditor from './SiteEditor';
 
 export const PILLAR_COL = ['var(--cy)', 'var(--lm)', 'var(--am)', 'var(--mg)'];
 
@@ -9,7 +10,7 @@ const NAV = [
   { group: 'the board', move: 1, items: [['overview', 'Overview', 'var(--am)']] },
   { group: 'the four pillars', move: 2, items: [['tracking', 'Tracking', 'var(--cy)'], ['data', 'Data', 'var(--lm)'], ['reporting', 'Reporting', 'var(--am)'], ['automation', 'Automation', 'var(--mg)']] },
   { group: 'the edge', move: 3, items: [['inbox', 'Inbox', 'var(--mg)'], ['ai', 'Private AI', 'var(--cy)'], ['audits', 'Audits', 'var(--lm)']] },
-  { group: 'the table', move: 4, items: [['clients', 'Clients', 'var(--lm)'], ['settings', 'Settings', '#C9C2F7']] }
+  { group: 'the table', move: 4, items: [['website', 'Website', 'var(--am)'], ['clients', 'Clients', 'var(--lm)'], ['settings', 'Settings', '#C9C2F7']] }
 ];
 
 export default function Dashboard({ initial, persistent, preview = false }) {
@@ -111,6 +112,7 @@ export default function Dashboard({ initial, persistent, preview = false }) {
             {view === 'inbox' && <Inbox {...ctx} />}
             {view === 'ai' && <PrivateAI {...ctx} />}
             {view === 'audits' && <Audits {...ctx} />}
+            {view === 'website' && <SiteEditor {...ctx} persistent={persistent || preview} />}
             {view === 'clients' && <Clients {...ctx} />}
             {view === 'settings' && <Settings {...ctx} persistent={persistent} />}
           </div>
